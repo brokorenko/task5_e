@@ -13,17 +13,17 @@
 <body>
 <form action="FrontController">
     <input type="hidden" name="type"   value="sax" />
-    <input type="hidden" name="command"   value="parser" />
+    <input type="hidden" name="command"   value="Parse" />
     <button type="submit">SAX</button>
 </form>
 <form action="FrontController">
     <input type="hidden" name="type"   value="stax" />
-    <input type="hidden" name="command"   value="parser" />
+    <input type="hidden" name="command"   value="Parse" />
     <button type="submit">STAX</button>
 </form>
 <form action="FrontController">
     <input type="hidden" name="type"   value="dom" />
-    <input type="hidden" name="command"   value="parser" />
+    <input type="hidden" name="command"   value="Parse" />
     <button type="submit">DOM</button>
 </form>
 </body>

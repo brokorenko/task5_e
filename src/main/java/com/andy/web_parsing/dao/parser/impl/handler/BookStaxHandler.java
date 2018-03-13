@@ -1,37 +1,23 @@
-package com.andy.web_parsing.dao.parser;
+package com.andy.web_parsing.dao.parser.impl.handler;
 
+import com.andy.web_parsing.dao.parser.impl.BookTagName;
 import com.andy.web_parsing.model.Book;
-import org.xml.sax.InputSource;
 
-import javax.xml.stream.XMLInputFactory;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
 
-public class StParser {
-    public static List<Book> getBooks(InputSource is) throws FileNotFoundException, XMLStreamException {
-        XMLInputFactory xmlInputFactory = XMLInputFactory.newInstance();
-        List<Book> books;
-
-        InputStream inputStream = is.getByteStream();
-        XMLStreamReader xmlStreamReader = xmlInputFactory.createXMLStreamReader(inputStream);
-
-        books =  process(xmlStreamReader);
-
-        return books;
-    }
-
-    private static List<Book> process(XMLStreamReader reader) throws XMLStreamException {
+public class BookStaxHandler {
+   public List<Book> process(XMLStreamReader reader) throws XMLStreamException {
 
         Book book = null;
         BookTagName elementName = null;
         List<Book> books = new ArrayList<>();
 
         while (reader.hasNext()){
+
             int type = reader.next();
 
             switch (type){
@@ -78,5 +64,4 @@ public class StParser {
         }
         return books;
     }
-
 }

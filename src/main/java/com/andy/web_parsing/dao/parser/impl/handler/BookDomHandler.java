@@ -1,30 +1,20 @@
-package com.andy.web_parsing.dao.parser;
+package com.andy.web_parsing.dao.parser.impl.handler;
 
 import com.andy.web_parsing.model.Book;
-import com.sun.org.apache.xerces.internal.parsers.DOMParser;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.NodeList;
-import org.xml.sax.InputSource;
-import org.xml.sax.SAXException;
 
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class DParser {
+public class BookDomHandler {
+    public List<Book> process(Document document) {
 
-    public static List<Book> getBooks(InputSource is) throws IOException, SAXException {
-
-        DOMParser parser = new DOMParser();
-        parser.parse(is);
-
-        Document document = parser.getDocument();
         Element root = document.getDocumentElement();
         NodeList nodeList = root.getElementsByTagName("book");
-
+        List<Book> books = new ArrayList<>();
         Book book;
-        List<Book> books = new ArrayList<Book>();
 
         for (int i = 0; i < nodeList.getLength(); i++) {
 

@@ -1,9 +1,7 @@
 package com.andy.web_parsing.dao;
 
 import com.andy.web_parsing.dao.exception.DAOException;
-import com.andy.web_parsing.dao.parser.DParser;
-import com.andy.web_parsing.dao.parser.SParser;
-import com.andy.web_parsing.dao.parser.StParser;
+import com.andy.web_parsing.dao.parser.*;
 import com.andy.web_parsing.dao.util.FilenameReader;
 import com.andy.web_parsing.model.Book;
 import org.xml.sax.InputSource;
@@ -16,48 +14,28 @@ import java.util.List;
 
 public class DAOImpl implements DAO {
 
-    private enum ParserType{SAX, STAX, DOM}
-
     private static List<Book> books = new ArrayList<>();
     private static File file = new File(FilenameReader.readFilename());
 
     private static long fileLastModified;
 
+    private static final int BOOKS_ON_PAGE_COUNT = 10;
+
     public void parseBookFile(String parserType) throws DAOException {
 
         fileLastModified = file.lastModified();
 
-        InputSource inputSource = null;
+        InputSource inputSource;
+        ParserFactory parserFactory = ParserFactory.getInstance();
+        Parser parser = parserFactory.getParser(parserType);
 
         try {
             inputSource = new InputSource(new FileInputStream(file));
-        } catch (FileNotFoundException e) {
-            throw new DAOException(e.getMessage() + "in DAO");
+            books = parser.getBooks(inputSource);
+        } catch (IOException | XMLStreamException | SAXException e) {
+            throw new DAOException(e.getMessage()+ "in DAO method parseBookFile");
         }
 
-        switch (ParserType.valueOf(parserType.toUpperCase())){
-            case SAX:
-                try {
-                    books = SParser.getBooks(inputSource);
-                } catch (SAXException | IOException e) {
-                    throw new DAOException(e.getMessage()+ "in SAX parser");
-                }
-                break;
-            case STAX:
-                try {
-                    books = StParser.getBooks(inputSource);
-                } catch (FileNotFoundException | XMLStreamException e) {
-                    throw new DAOException(e.getMessage() + "in STAX parser");
-                }
-                break;
-            case DOM:
-                try {
-                    books = DParser.getBooks(inputSource);
-                } catch (IOException | SAXException e) {
-                    throw new DAOException(e.getMessage()+ "in DOM parser");
-                }
-                break;
-        }
     }
 
     public int getPagesCount() throws DAOException {
@@ -67,7 +45,7 @@ public class DAOImpl implements DAO {
             parseBookFile("dom");
         }
 
-        pageCount = books.size() / 10;
+        pageCount = books.size() / BOOKS_ON_PAGE_COUNT;
 
         return pageCount;
     }
@@ -76,11 +54,11 @@ public class DAOImpl implements DAO {
         if (!fileIsValid()) {
             parseBookFile("dom");
         }
-        if (currentPage > books.size()/10){
-            currentPage = books.size()/10;
+        if (currentPage > books.size()/BOOKS_ON_PAGE_COUNT){
+            currentPage = books.size()/BOOKS_ON_PAGE_COUNT;
         }
-        int startElement = currentPage*10;
-        int endElement = currentPage*10 + 10 > books.size() ? books.size() : currentPage*10 + 10;
+        int startElement = currentPage*BOOKS_ON_PAGE_COUNT;
+        int endElement = currentPage*BOOKS_ON_PAGE_COUNT + BOOKS_ON_PAGE_COUNT > books.size() ? books.size() : currentPage*10 + 10;
         return books.subList(startElement, endElement);
 
     }

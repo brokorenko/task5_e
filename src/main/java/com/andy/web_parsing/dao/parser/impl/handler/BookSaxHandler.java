@@ -1,5 +1,6 @@
-package com.andy.web_parsing.dao.parser;
+package com.andy.web_parsing.dao.parser.impl.handler;
 
+import com.andy.web_parsing.dao.parser.impl.BookTagName;
 import com.andy.web_parsing.model.Book;
 import org.xml.sax.Attributes;
 import org.xml.sax.SAXException;
@@ -8,11 +9,11 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Handler extends DefaultHandler {
+public class BookSaxHandler extends DefaultHandler {
 
     private Book book;
     private StringBuilder content;
-    private List<Book> books = new ArrayList<Book>();
+    private List<Book> books = new ArrayList<>();
 
     @Override
     public void startElement(String uri, String localName, String qName, Attributes attributes) throws SAXException {

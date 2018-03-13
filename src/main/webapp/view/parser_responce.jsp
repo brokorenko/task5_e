@@ -37,7 +37,7 @@
 </table>
 
 <c:forEach var="i" begin="0" end="${pageCount}" step="1">
-    <a href="${pageContext.request.contextPath}?command=parsing_result&currentPage=${i}">${i + 1}</a>
+    <a href="${pageContext.request.contextPath}?command=ParseResult&currentPage=${i}">${i + 1}</a>
 </c:forEach>
 
 </body>
