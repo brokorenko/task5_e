@@ -12,11 +12,15 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class FrontController extends HttpServlet {
+
+    private static final String COMMAND_PATH_PATTERN = "com.andy.web_parsing.controller.command.%sCommand";
+
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws IOException, ServletException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
 
         FrontCommand frontCommand = getCommand(req);
         frontCommand.init(getServletContext(), req, resp);
+
         try {
             frontCommand.process();
         } catch (ServiceException e) {
@@ -26,8 +30,9 @@ public class FrontController extends HttpServlet {
     }
 
     private FrontCommand getCommand(ServletRequest request){
+
         try {
-            Class type = Class.forName(String.format("com.andy.web_parsing.controller.command.%sCommand", request.getParameter("command")));
+            Class type = Class.forName(String.format(COMMAND_PATH_PATTERN, request.getParameter("command")));
             return (FrontCommand) type.asSubclass(FrontCommand.class).newInstance();
         } catch (IllegalAccessException | InstantiationException | ClassNotFoundException e) {
             return new UnknownCommand();

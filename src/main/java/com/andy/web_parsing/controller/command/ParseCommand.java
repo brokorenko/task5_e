@@ -1,18 +1,22 @@
 package com.andy.web_parsing.controller.command;
 
-import com.andy.web_parsing.service.ReadXMLService;
-import com.andy.web_parsing.service.ReadXMLServiceImpl;
-import com.andy.web_parsing.service.exception.ServiceException;
-
-import javax.servlet.ServletException;
+import javax.servlet.http.HttpSession;
 import java.io.IOException;
 
 public class ParseCommand extends FrontCommand {
 
     @Override
-    public void process() throws ServletException, IOException, ServiceException {
-        ReadXMLService service = new ReadXMLServiceImpl();
-        service.readXML(request.getParameter("type"));
-        sendRedirect("/FrontController?command=ParseResult");
+    public void process() throws IOException {
+
+        addParserTypeInSession();
+
+        sendRedirect("/FrontController?command=ParseResult&currentPage=0");
+    }
+
+    private void addParserTypeInSession() {
+
+        String parserType = request.getParameter("type");
+        HttpSession httpSession = request.getSession(true);
+        httpSession.setAttribute("type", parserType);
     }
 }

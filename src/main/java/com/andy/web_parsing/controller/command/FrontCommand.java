@@ -3,15 +3,16 @@ package com.andy.web_parsing.controller.command;
 import com.andy.web_parsing.service.exception.ServiceException;
 
 import javax.servlet.*;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public abstract class FrontCommand {
     protected ServletContext context;
-    protected ServletRequest request;
+    protected HttpServletRequest request;
     protected HttpServletResponse response;
 
-    public void init(ServletContext context, ServletRequest request, HttpServletResponse response) {
+    public void init(ServletContext context, HttpServletRequest request, HttpServletResponse response) {
         this.context = context;
         this.request = request;
         this.response = response;

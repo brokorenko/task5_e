@@ -6,7 +6,6 @@ import com.andy.web_parsing.model.Book;
 import java.util.List;
 
 public interface DAO {
-    void parseBookFile(String parserType) throws DAOException;
-    int getPagesCount() throws DAOException;
-    List<Book> getBooksPart(int currentPage) throws DAOException;
+    int getPagesCount();
+    List<Book> getBooksPart(int currentPage, String parserType) throws DAOException;
 }

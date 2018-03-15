@@ -12,28 +12,15 @@ public class ReadXMLServiceImpl implements ReadXMLService {
 
     private DAO dao = new DAOImpl();
 
-    public void readXML(String parserType) throws ServiceException {
+    public List<Book> getBooksPart(int currentPage, String parserType) throws ServiceException {
         try {
-            dao.parseBookFile(parserType);
+            return dao.getBooksPart(currentPage, parserType);
         } catch (DAOException e) {
             throw new ServiceException(e.getMessage());
         }
     }
 
-    public List<Book> getBooksPart(int currentPage) throws ServiceException {
-        try {
-            return dao.getBooksPart(currentPage);
-        } catch (DAOException e) {
-            throw new ServiceException(e.getMessage());
-        }
-    }
-
-
-    public int getPagesCount() throws ServiceException {
-        try {
-            return dao.getPagesCount();
-        } catch (DAOException e) {
-            throw new ServiceException(e.getMessage());
-        }
+    public int getPagesCount() {
+        return dao.getPagesCount();
     }
 }

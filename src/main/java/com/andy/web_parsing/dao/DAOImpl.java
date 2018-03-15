@@ -9,61 +9,50 @@ import org.xml.sax.SAXException;
 
 import javax.xml.stream.XMLStreamException;
 import java.io.*;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DAOImpl implements DAO {
 
-    private static List<Book> books = new ArrayList<>();
-    private static File file = new File(FilenameReader.readFilename());
+    private ParserFactory parserFactory = ParserFactory.getInstance();
+    private File file = new File(FilenameReader.readFilename());
+    private int pagesCount = 0;
 
-    private static long fileLastModified;
+    private InputSource inputSource;
+    private Parser parser;
 
-    private static final int BOOKS_ON_PAGE_COUNT = 10;
+    private static final int RECORDS_ON_PAGE = 10;
 
-    public void parseBookFile(String parserType) throws DAOException {
+    public List<Book> getBooksPart(int currentPage, String parserType) throws DAOException {
 
-        fileLastModified = file.lastModified();
+        List<Book> books;
 
-        InputSource inputSource;
-        ParserFactory parserFactory = ParserFactory.getInstance();
-        Parser parser = parserFactory.getParser(parserType);
+        if (currentPage > pagesCount){ //вынести
+            currentPage = pagesCount;
+        }
 
         try {
             inputSource = new InputSource(new FileInputStream(file));
+            parser = parserFactory.getParser(parserType);
+
             books = parser.getBooks(inputSource);
+            pagesCount = books.size()/RECORDS_ON_PAGE;
         } catch (IOException | XMLStreamException | SAXException e) {
             throw new DAOException(e.getMessage()+ "in DAO method parseBookFile");
         }
 
+        return books.subList(getStartElement(currentPage), getEndElement(currentPage, books.size()));
     }
 
-    public int getPagesCount() throws DAOException {
-        int pageCount;
-
-        if (!fileIsValid()) {
-            parseBookFile("dom");
-        }
-
-        pageCount = books.size() / BOOKS_ON_PAGE_COUNT;
-
-        return pageCount;
+    public int getPagesCount() {
+        return pagesCount;
     }
 
-    public List<Book> getBooksPart(int currentPage) throws DAOException {
-        if (!fileIsValid()) {
-            parseBookFile("dom");
-        }
-        if (currentPage > books.size()/BOOKS_ON_PAGE_COUNT){
-            currentPage = books.size()/BOOKS_ON_PAGE_COUNT;
-        }
-        int startElement = currentPage*BOOKS_ON_PAGE_COUNT;
-        int endElement = currentPage*BOOKS_ON_PAGE_COUNT + BOOKS_ON_PAGE_COUNT > books.size() ? books.size() : currentPage*10 + 10;
-        return books.subList(startElement, endElement);
-
+    private int getStartElement(int currentPage) {
+        return currentPage*RECORDS_ON_PAGE;
     }
 
-    private boolean fileIsValid() {
-        return file.lastModified() == fileLastModified;
+    private int getEndElement(int currentPage, int booksSize) {
+        return currentPage*RECORDS_ON_PAGE + RECORDS_ON_PAGE > booksSize ? booksSize : currentPage*RECORDS_ON_PAGE + RECORDS_ON_PAGE;
     }
+
 }
